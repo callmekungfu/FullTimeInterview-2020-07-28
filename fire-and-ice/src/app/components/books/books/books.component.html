@@ -1,3 +1,79 @@
-<p>
-  Add information about the books in here
-</p>
+<div class="container">
+  <div class="row mt-5">
+    <div class="col">
+      <h2 class="display-4">Ice and Fire Books</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div
+        class="card my-4"
+        *ngFor="let book of books"
+      >
+        <div class="card-body">
+          <h5 class="card-title">{{book.name}}</h5>
+          <dl>
+            <dt>Authors</dt>
+            <dd>{{book.authors.join(', ')}}</dd>
+            <dt>Release Date</dt>
+            <dd>{{book.released | date:'longDate'}}</dd>
+            <dt>ISBN</dt>
+            <dd>{{book.isbn}}</dd>
+          </dl>
+          <div>
+            <p class="font-weight-bold">Characters</p>
+            <div class="card-columns">
+              <div
+                class="card"
+                *ngFor="let character of book.characterDatas"
+              >
+                <div class="card-body">
+                  <h5 class="card-title">{{character.name}}</h5>
+                  <dl>
+                    <dt>Culture</dt>
+                    <dd [ngClass]="{'text-muted': !character.culture?.length}">{{character.culture || 'Unknown'}}</dd>
+                    <dt>Birth Information</dt>
+                    <dd [ngClass]="{'text-muted': !character.born?.length}">{{character.born || 'Unknown'}}</dd>
+                    <dt>Titles</dt>
+                    <dd [ngClass]="{'text-muted': !character.titles[0].length}">
+                      <ng-container *ngFor="let title of character.titles">
+                        <span
+                          class="badge badge-pill badge-light"
+                          *ngIf="title.length"
+                        >
+                          {{title}}
+                        </span>
+                      </ng-container>
+                      <ng-container *ngIf="!character.titles[0].length">Unknown</ng-container>
+                    </dd>
+                    <dt>Alias</dt>
+                    <dd [ngClass]="{'text-muted': !character.aliases[0].length}">
+                      <ng-container *ngFor="let alias of character.aliases">
+                        <span
+                          class="badge badge-pill badge-light"
+                          *ngIf="alias.length"
+                        >
+                          {{alias}}
+                        </span>
+                      </ng-container>
+                      <ng-container *ngIf="!character.aliases[0].length">Unknown</ng-container>
+                    </dd>
+                    <dt>Appeard In</dt>
+                    <dd>
+                      <span
+                        class="badge badge-pill badge-light"
+                        *ngFor="let books of character.books"
+                      >
+                        {{books}}
+                      </span>
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
