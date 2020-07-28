@@ -99,6 +99,13 @@
                 </div>
               </div>
             </div>
+            <button
+              class="btn btn-link btn-block"
+              *ngIf="book.characterDatas"
+              (click)="fetchCharacters(book)"
+            >
+              Load More Characters
+            </button>
           </div>
         </div>
       </div>
