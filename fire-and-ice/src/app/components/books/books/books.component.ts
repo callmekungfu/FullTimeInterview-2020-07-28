@@ -52,13 +52,16 @@ export class BooksComponent implements OnInit {
   readonly CHARACTER_PAGE_SIZE = 12;
   books: Book[];
   pageNumber = 1;
+  pageNumbers = [1, 2];
+  bookTitleUrlMap: { [key: string]: Book } = {};
   constructor(private requestr: RequestrService) {}
 
   ngOnInit() {
-    this.fetchBooks(1);
+    this.fetchBooks(this.pageNumber);
   }
 
   async fetchBooks(page: number, pageSize = 10) {
+    this.pageNumber = page;
     try {
       const res: HttpResponse<Book[]> = await this.requestr.get(
         urls.books,
@@ -84,15 +87,37 @@ export class BooksComponent implements OnInit {
       book.characters.slice(start, end).map((c) => this.requestr.get(c))
     );
     const characters: Character[] = res.map((r) => r.body);
+
     if (!book.characterDatas) {
       book.characterDatas = characters;
     } else {
       book.characterDatas = [...book.characterDatas, ...characters];
     }
+    characters.forEach((c) => this.fetchAllMentionedBooks(c.books));
     book.characterPage = page + 1;
   }
 
+  async addTitleToMap(book: Book) {
+    this.bookTitleUrlMap[book.url] = book;
+  }
+
+  async fetchAllMentionedBooks(books: string[]) {
+    const filteredBooks = books.filter(
+      (b) => !Object.keys(this.bookTitleUrlMap).includes(b)
+    );
+    const res = await Promise.all(
+      filteredBooks.map((fb) => this.requestr.get(fb))
+    );
+    const fetchedBooks: Book[] = res.map((r) => r.body);
+    fetchedBooks.forEach((fb) => this.addTitleToMap(fb));
+  }
+
+  async requestTitleFromServer(url: string) {}
+
   private initializeBookData(books: Book[]) {
-    return books.map((b) => ({ ...b, characterPage: 0 }));
+    return books.map((b) => {
+      this.addTitleToMap(b);
+      return { ...b, characterPage: 0 };
+    });
   }
 }

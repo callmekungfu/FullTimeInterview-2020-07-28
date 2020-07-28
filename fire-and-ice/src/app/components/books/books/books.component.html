@@ -1,11 +1,33 @@
 <div class="container">
   <div class="row mt-5">
-    <div class="col">
+    <div class="col d-flex align-items-center justify-content-between">
       <h2 class="display-4">Ice and Fire Books</h2>
+      <nav aria-label="Page navigation example">
+        <ul class="pagination">
+          <li
+            class="page-item"
+            [ngClass]="{active: pageNum === pageNumber}"
+            *ngFor="let pageNum of pageNumbers"
+          >
+            <a
+              class="page-link"
+              (click)="fetchBooks(pageNum)"
+            >
+              {{pageNum}}
+            </a>
+          </li>
+        </ul>
+      </nav>
     </div>
   </div>
   <div class="row">
     <div class="col">
+      <div
+        *ngIf="!books"
+        class="text-center"
+      >
+        Loading...
+      </div>
       <div
         class="card my-4"
         *ngFor="let book of books"
@@ -22,6 +44,12 @@
           </dl>
           <div>
             <p class="font-weight-bold">Characters</p>
+            <div
+              *ngIf="!book.characterDatas"
+              class="text-center"
+            >
+              Loading...
+            </div>
             <div class="card-columns">
               <div
                 class="card"
@@ -62,9 +90,9 @@
                     <dd>
                       <span
                         class="badge badge-pill badge-light"
-                        *ngFor="let books of character.books"
+                        *ngFor="let book of character.books"
                       >
-                        {{books}}
+                        {{bookTitleUrlMap[book]?.name || book}}
                       </span>
                     </dd>
                   </dl>
