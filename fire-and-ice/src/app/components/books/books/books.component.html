@@ -1,14 +1,21 @@
+<!-- Page Container -->
 <div class="container">
+  <!-- Page Header -->
   <div class="row mt-5">
+    <!-- Page Header holder (flex center aligned space between) -->
     <div class="col d-flex align-items-center justify-content-between">
+      <!-- Title -->
       <h2 class="display-4">Ice and Fire Books</h2>
+      <!-- Pagination -->
       <nav aria-label="Page navigation example">
         <ul class="pagination">
+          <!-- Each Page Object -->
           <li
             class="page-item"
             [ngClass]="{active: pageNum === pageNumber}"
             *ngFor="let pageNum of pageNumbers"
           >
+            <!-- Page button (Bad practice since no a tag should be without href, but save time here) -->
             <a
               class="page-link"
               (click)="fetchBooks(pageNum)"
@@ -20,20 +27,27 @@
       </nav>
     </div>
   </div>
+  <!-- Row of books -->
   <div class="row">
+    <!-- Books Column -->
     <div class="col">
+      <!-- Books Loader -->
       <div
         *ngIf="!books"
         class="text-center"
       >
         Loading...
       </div>
+      <!-- Book card -->
       <div
         class="card my-4"
         *ngFor="let book of books"
       >
+        <!-- Book Card Body -->
         <div class="card-body">
+          <!-- Book title -->
           <h5 class="card-title">{{book.name}}</h5>
+          <!-- Book Information -->
           <dl>
             <dt>Authors</dt>
             <dd>{{book.authors.join(', ')}}</dd>
@@ -42,29 +56,39 @@
             <dt>ISBN</dt>
             <dd>{{book.isbn}}</dd>
           </dl>
+          <!-- Book Characters -->
           <div>
             <p class="font-weight-bold">Characters</p>
+            <!-- Book Character Loader -->
             <div
               *ngIf="!book.characterDatas"
               class="text-center"
             >
               Loading...
             </div>
+            <!-- Character Masonry Display -->
             <div class="card-columns">
+              <!-- Character Card -->
               <div
                 class="card"
                 *ngFor="let character of book.characterDatas"
               >
+                <!-- Character Card Body -->
                 <div class="card-body">
+                  <!-- Character Card Title -->
                   <h5 class="card-title">{{character.name}}</h5>
+                  <!-- Character Information -->
                   <dl>
                     <dt>Culture</dt>
                     <dd [ngClass]="{'text-muted': !character.culture?.length}">{{character.culture || 'Unknown'}}</dd>
                     <dt>Birth Information</dt>
                     <dd [ngClass]="{'text-muted': !character.born?.length}">{{character.born || 'Unknown'}}</dd>
+                    <!-- Character Titles -->
                     <dt>Titles</dt>
+                    <!-- Mute the text if no titles are available -->
                     <dd [ngClass]="{'text-muted': !character.titles[0].length}">
                       <ng-container *ngFor="let title of character.titles">
+                        <!-- Each title should be shown in the shape of a pill -->
                         <span
                           class="badge badge-pill badge-light"
                           *ngIf="title.length"
@@ -72,9 +96,14 @@
                           {{title}}
                         </span>
                       </ng-container>
+                      <!-- Placeholder if no titles exist -->
                       <ng-container *ngIf="!character.titles[0].length">Unknown</ng-container>
                     </dd>
+                    <!-- Character Alias -->
                     <dt>Alias</dt>
+                    <!-- The element here is very similar to the titles section -->
+                    <!-- If I were to work on this in a production env, I would make it a template -->
+                    <!-- Or a component. -->
                     <dd [ngClass]="{'text-muted': !character.aliases[0].length}">
                       <ng-container *ngFor="let alias of character.aliases">
                         <span
@@ -86,19 +115,25 @@
                       </ng-container>
                       <ng-container *ngIf="!character.aliases[0].length">Unknown</ng-container>
                     </dd>
+                    <!-- Appeared in book -->
                     <dt>Appeard In</dt>
                     <dd>
+                      <!-- Book title Pill -->
                       <span
                         class="badge badge-pill badge-light"
                         *ngFor="let book of character.books"
                       >
-                        {{bookTitleUrlMap[book]?.name || book}}
+                        {{bookTitleUrlMap[book]?.name}}
                       </span>
                     </dd>
                   </dl>
                 </div>
               </div>
             </div>
+            <!-- Load More characters button -->
+            <!-- Known Flaw: no indication to users that we are loading data, thus the user -->
+            <!-- may feel that the UI is irresponsive. This can be fixed by adding flags in the -->
+            <!-- component code, omitted to save some time. -->
             <button
               class="btn btn-link btn-block"
               *ngIf="book.characterDatas"
