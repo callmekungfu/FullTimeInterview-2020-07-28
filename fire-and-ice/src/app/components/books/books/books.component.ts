@@ -57,6 +57,7 @@ export class BooksComponent implements OnInit {
   pageNumbers = [1, 2];
   // Raw book resource map, stored to get book titles
   bookTitleUrlMap: { [key: string]: Book } = {};
+
   constructor(private requestr: RequestrService) {}
 
   /**
@@ -137,9 +138,13 @@ export class BooksComponent implements OnInit {
    * mainly used to hydrate the bookUrlMap. This function will check if the
    * url already exists in the map and filter those results out then fetch
    * the remaining results.
+   *
    * @param books A list of book urls to check and fetch
    */
   async fetchAllMentionedBooks(books: string[]) {
+    if (!books) {
+      return;
+    }
     const filteredBooks = books.filter((b) => !this.bookTitleUrlMap[b]);
     const res = await Promise.all(
       filteredBooks.map((fb) => this.requestr.get(fb))
@@ -151,9 +156,10 @@ export class BooksComponent implements OnInit {
   /**
    * This function prepares book object for display by setting them in the map
    * and injecting character page properties into the object.
+   *
    * @param books The raw book information obtained from the server
    */
-  private initializeBookData(books: Book[]) {
+  initializeBookData(books: Book[]) {
     return books.map((b) => {
       this.addTitleToMap(b);
       return { ...b, characterPage: 0 };
