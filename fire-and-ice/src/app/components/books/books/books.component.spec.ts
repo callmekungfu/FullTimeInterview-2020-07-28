@@ -87,7 +87,6 @@ describe('BooksComponent', () => {
         Promise.resolve({ body: { url: 'def' } })
       );
       await component.fetchAllMentionedBooks(['abc', 'def']);
-      console.log(component.bookTitleUrlMap);
       expect(Object.keys(component.bookTitleUrlMap).includes('def')).toEqual(
         true
       );
